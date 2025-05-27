@@ -56,6 +56,7 @@ class _RadioItemState extends State<RadioItem> {
     });
   }
 
+
   void stop() async {
     await widget.audioPlayer.stop();
     setState(() {
