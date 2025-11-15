@@ -1,48 +1,59 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
+import 'package:yaqeen/Islami/modules/spalsh_screen.dart';
 import 'Islami/Core/Provider/app_provider.dart';
 import 'Islami/Core/Provider/prefs_helper.dart';
-import 'Islami/Core/application_theme.dart';
 import 'Islami/modules/Hadeth/Hadeth_details_view.dart';
-import 'Islami/modules/Quran/quran_view.dart';
+import 'Islami/modules/home/quran/quran_view.dart';
 import 'Islami/modules/home_layout.dart';
-import 'Islami/modules/spalsh_screen.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'data/cubit/prayer_times_cubit.dart';
+import 'data/cubit/radio_cubit.dart';
+import 'data/radio_repository.dart';
+import 'l10n/app_localizations.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // SharedPreferences
   PrefsHelper.prefs = await SharedPreferences.getInstance();
-  runApp(ChangeNotifierProvider(
-      create: (buildContext) => AppProvider()..init(), child: MyappMobile()));
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppProvider()..init()),
+      ],
+      child: const MyAppMobile(),
+    ),
+  );
 }
 
-class MyappMobile extends StatelessWidget {
+class MyAppMobile extends StatelessWidget {
+  const MyAppMobile({super.key});
+
   @override
   Widget build(BuildContext context) {
-    AppProvider appProvider = Provider.of<AppProvider>(context);
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ApplicationTheme.lightTheme,
-      darkTheme: ApplicationTheme.darkTheme,
-      // Through it I can control the system whether light or dark by provider
-      themeMode: appProvider.currentTheme,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
-      supportedLocales: AppLocalizations.supportedLocales,
+    final appProvider = Provider.of<AppProvider>(context);
+
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => PrayerTimesCubit()),
+        BlocProvider(create: (_) => RadioCubit(RadioRepository())),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        themeMode: appProvider.currentTheme,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        locale: Locale(appProvider.currentLocale),
       initialRoute: SplashScreen.routeName,
-      locale: Locale(appProvider.currentLocale),
-      routes: {
-        SplashScreen.routeName: (_) => SplashScreen(),
-        HomeLayout.routeName: (_) => HomeLayout(),
-        QuranView.routeName: (_) => QuranView(),
-        HadethDetailsView.routeName: (_) => HadethDetailsView(),
-      },
+        routes: {
+          SplashScreen.routeName: (_) => const SplashScreen(),
+          HomeLayout.routeName: (_) => const HomeLayout(),
+          HadethDetailsView.routeName: (_) => const HadethDetailsView(),
+        },
+      ),
     );
   }
 }
-
-
-
-
