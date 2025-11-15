@@ -20,5 +20,4 @@ class PrefsHelper {
     return prefs.getString("theme") ?? "light";
   }
 
-
 }

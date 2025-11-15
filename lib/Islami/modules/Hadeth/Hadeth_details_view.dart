@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
-import '../../Core/Provider/app_provider.dart';
 
 class HadethDetailsView extends StatefulWidget {
   static const String routeName = "Hadeth_Details_View";
@@ -13,66 +10,72 @@ class HadethDetailsView extends StatefulWidget {
 }
 
 class _HadethDetailsViewState extends State<HadethDetailsView> {
-  String content = "";
-  List<String> allVerses = [];
 
   @override
   Widget build(BuildContext context) {
-    var args = ModalRoute.of(context)?.settings.arguments as HadethContent;
+    var args = ModalRoute.of(context)!.settings.arguments as HadethContent;
     var theme = Theme.of(context);
-    var mediaQuery = MediaQuery.of(context).size;
-    var appProvider = Provider.of<AppProvider>(context);
-    return Container(
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: AssetImage(appProvider.getBackgroundImage()),
-          fit: BoxFit.cover,
+
+    return Scaffold(
+      backgroundColor: const Color(0xff202020),
+      appBar: AppBar(
+        backgroundColor: const Color(0xff202020),
+        iconTheme: const IconThemeData(
+          color: Colors.white70,
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: Text("إسلامي"),
-        ),
-        body: Container(
-          padding: EdgeInsets.symmetric(vertical: 40, horizontal: 15),
-          margin: EdgeInsets.only(left: 30, right: 30, top: 40, bottom: 120),
-          width: mediaQuery.width,
-          height: mediaQuery.height,
-          decoration: BoxDecoration(
-            color: theme.colorScheme.onBackground.withOpacity(0.8),
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: Column(
-            children: [
-              Text(
-                args.title,
-                style: theme.textTheme.bodyLarge!.copyWith(
-                  color: theme.colorScheme.onSecondary,
-                ),
-              ),
-              Divider(
-                color: theme.primaryColor,
-                indent: 30,
-                endIndent: 30,
-                thickness: 1.2,
-                height: 10,
-              ),
-              Expanded(
-                child: ListView(
-                  children: [
-                    Text(
-                      args.content,
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodySmall!.copyWith(
-                          color: theme.colorScheme.onSecondary, height: 1.8),
+      body: Column(
+        children: [
+          // ✅ الجزء اللي فيه المحتوى فقط
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 30),
+              child: Column(
+                children: [
+                  Text(
+                    args.title,
+                    style:const TextStyle(
+                      color: const Color(0xffE2BE7F),
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold
                     ),
-                  ],
-                ),
+                  ),
+                const  Divider(
+                    color: Colors.white70,
+                    indent: 30,
+                    endIndent: 30,
+                    thickness: 1.2,
+                    height: 10,
+                  ),
+
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Text(
+                        args.content,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                            color: Color(0xffE2BE7F),
+                            height: 1.8
+                            ,fontSize: 20
+                        )
+                         ,
+                        ),
+                      ),
+                    ),
+
+                ],
               ),
-            ],
+            ),
           ),
-        ),
+
+          // ✅ الصورة برا الـ Padding = ملهاش أي مسافة
+          Image.asset(
+            "assets/images/gggg.png",
+            width: double.infinity,
+            fit: BoxFit.cover,
+            height: 120, // عدل المقاس براحتك
+          ),
+        ],
       ),
     );
   }

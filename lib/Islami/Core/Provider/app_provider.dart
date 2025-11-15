@@ -30,19 +30,9 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //change background the application
-  String getBackgroundImage() {
-    return currentTheme == ThemeMode.dark
-        ? "assets/images/background_dart.png"
-        : "assets/images/background_light.png";
-  }
 
-//change Splash  the application
-  String splashScreen() {
-    return currentTheme == ThemeMode.dark
-        ? "assets/images/splash_dart.png"
-        : "assets/images/Splash.png";
-  }
+
+
 
   // change the mode if is dark then done else light and
   // the action take in settings by use ? "light":"dark"

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:provider/provider.dart';
-
-import '../../Core/Provider/app_provider.dart';
-
 class TasbehView extends StatefulWidget {
   const TasbehView({super.key});
 
@@ -14,122 +10,134 @@ class TasbehView extends StatefulWidget {
 class _TasbehViewState extends State<TasbehView> {
   int counter = 1;
   List<String> azkar = [
-    "سبحان الله",
-    "الحمدلله",
-    "الله اكبر",
-    "لا إله إلا الله"
+    "سُبْحَانَ اللَّهِ ",
+    "الْحَمْدُ لِلَّهِ",
+    "اللَّهُ أَكْبَرُ",
+    "لَا إِلَهَ إِلَّا اللَّهُ"
   ];
   double angle = 0;
-
   int azkarCounter = 0;
 
   @override
   Widget build(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context).size;
-    var theme = Theme.of(context);
-
-    var appProvider = Provider.of<AppProvider>(context);
+    var size = MediaQuery.of(context).size;
 
     return Container(
-      width: mediaQuery.width,
-      margin: EdgeInsets.only(top: mediaQuery.height * .12),
+      width: size.width,
+      height: size.height,
+      decoration: const BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage("assets/images/Background_sbaha.png"),
+          fit: BoxFit.cover,
+        ),
+      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          const SizedBox(height: 30),
+          Image.asset(
+            "assets/images/logo.png",
+            width: 300,
+          ),
+
+          Text(
+            "سَبِّحِ اسْمَ رَبِّكَ الأعلى",
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 38,
+              fontFamily: 'Janna LT',
+            ),
+          ),
+
+          const Spacer(),
+
+          /// 🔹 السبحة
           Stack(
-            alignment: Alignment.topCenter,
+            alignment: Alignment.center,
             clipBehavior: Clip.none,
             children: [
+              /// رأس السبحة
               Positioned(
-                top: -mediaQuery.height * .075,
-                child: Padding(
-                  padding: EdgeInsets.only(left: mediaQuery.width * .1),
-                  child: Image.asset(
-                    appProvider.isDarkEnabled()
-                        ? "assets/images/sebha_head_dark.png"
-                        : "assets/images/sebha_head.png",
-                    height: mediaQuery.height * .1,
-                    width: mediaQuery.width * .2,
-                    fit: BoxFit.fill,
-                  ),
+                top: -size.height * 0.089,
+                left: size.width * 0.226,
+                child: Image.asset(
+                  "assets/images/sabha.png",
+                  height: size.height * 0.12,
+                  width: size.width * 0.29,
                 ),
               ),
+
+              /// جسم السبحة (بيلف)
               GestureDetector(
-                onTap: () {
-                  logic();
-                },
+                onTap: _onSebhaTap,
                 child: Transform.rotate(
                   angle: angle,
                   child: Image.asset(
-                    appProvider.isDarkEnabled()
-                        ? "assets/images/sebha_body_dark.png"
-                        : "assets/images/body_sebha.png",
-                    height: mediaQuery.height * .25,
-                    width: mediaQuery.width * .53,
-                    fit: BoxFit.fill,
+                    "assets/images/sbaha_body.png",
+                    height: size.height * 0.35,
+                    width: size.width * 0.75,
+                    fit: BoxFit.contain,
                   ),
                 ),
               ),
+
+              /// النصوص الثابتة
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  /// العداد
+                  GestureDetector(
+                    onTap: _onSebhaTap,
+                    child: Text(
+                      counter.toString(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.bold,
+                        shadows: [
+                          Shadow(
+                            color: Colors.black.withOpacity(0.3),
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  /// 🔹 الذكر: الضغط عليه يعمل دوران السبحة
+                  GestureDetector(
+                    onTap: _onSebhaTap,
+                    child: Text(
+                      azkar[azkarCounter],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 38,
+                        fontFamily: 'Janna LT',
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-          SizedBox(
-            height: mediaQuery.height * .05,
-          ),
-          Text(
-            // the number of tasbeeh by local
-            "عدد التسبيحات",
-            style: theme.textTheme.bodyMedium
-                ?.copyWith(fontWeight: FontWeight.bold, fontSize: 25),
-          ),
-          SizedBox(
-            height: mediaQuery.height * .05,
-          ),
-          Container(
-            padding: EdgeInsets.all(mediaQuery.height * 0.025),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(25),
-              color: theme.primaryColor.withOpacity(.57),
-            ),
-            child: Text(
-              counter.toString(),
-              style: theme.textTheme.bodyLarge,
-            ),
-          ),
-          SizedBox(
-            height: mediaQuery.height * .05,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              logic();
-            },
-            style: ElevatedButton.styleFrom(
-              elevation: 10,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(25),
-              ),
-              backgroundColor: theme.colorScheme.onPrimary,
-            ),
-            child: Text(azkar[azkarCounter],
-                style: TextStyle(
-                    color: theme.colorScheme.onPrimaryContainer, fontSize: 30)),
-          ),
+
+          const SizedBox(height: 150),
         ],
       ),
     );
   }
 
-  void logic() {
-    if (counter == 33) {
-      counter = 1;
-      if (azkarCounter == 3) {
-        azkarCounter = 0;
+  /// دالة الدوران والعدّ
+  void _onSebhaTap() {
+    setState(() {
+      if (counter == 33) {
+        counter = 1;
+        azkarCounter = (azkarCounter + 1) % azkar.length;
       } else {
-        azkarCounter++;
+        counter++;
       }
-    } else {
-      counter++;
-    }
-    angle += 10;
-    setState(() {});
+      angle += 0.2; // السبحة تلف
+    });
   }
 }

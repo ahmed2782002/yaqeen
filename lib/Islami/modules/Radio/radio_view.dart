@@ -1,9 +1,10 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:yaqeen/Islami/modules/Radio/radio_item.dart';
-
-import '../../../data/api_mananger.dart';
-import '../../../data/model/radiosModel.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../data/cubit/radio_cubit.dart';
+import '../../../data/cubit/radio_state.dart';
+import '../../../data/radio_repository.dart';
+import 'radio_item.dart';
 
 class RadioView extends StatefulWidget {
   const RadioView({super.key});
@@ -14,7 +15,7 @@ class RadioView extends StatefulWidget {
 
 class _RadioViewState extends State<RadioView> {
   late AudioPlayer audioPlayer;
-  int currentRadioIndex = 0; // لحفظ الفهرس الحالي للراديو
+  int currentRadioIndex = 0;
 
   @override
   void initState() {
@@ -24,39 +25,36 @@ class _RadioViewState extends State<RadioView> {
 
   @override
   void dispose() {
-    super.dispose();
     audioPlayer.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var mediaQuery = MediaQuery.of(context).size;
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Spacer(),
-        Image.asset(
-          "assets/images/radio.png",
-          width: mediaQuery.width * .75,
-        ),
-        SizedBox(
-          height: mediaQuery.height * .08,
-        ),
-        Spacer(),
-        FutureBuilder<List<Radios>?>( // جلب المحطات
-            future: ApiManager.GetRadios(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
-                return Center(
-                  child: Text(snapshot.error.toString()),
-                );
-              } else if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else {
-                var radios = snapshot.data ?? [];
-                return SizedBox(
+
+    return BlocProvider(
+      create: (context) => RadioCubit(RadioRepository())..getRadios(),
+      child: BlocBuilder<RadioCubit, RadioState>(
+        builder: (context, state) {
+          if (state is RadioLoading) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (state is RadioError) {
+            return Center(child: Text(state.message));
+          } else if (state is RadioSuccess) {
+            var radios = state.radios;
+
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Spacer(),
+                Image.asset(
+                  "assets/images/radio.png",
+                  width: mediaQuery.width * .75,
+                ),
+                SizedBox(height: mediaQuery.height * .08),
+                const Spacer(),
+                SizedBox(
                   height: mediaQuery.height * .3,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -66,12 +64,14 @@ class _RadioViewState extends State<RadioView> {
                         child: IconButton(
                           onPressed: () {
                             setState(() {
-                              currentRadioIndex = (currentRadioIndex - 1) % radios.length;
+                              currentRadioIndex =
+                                  (currentRadioIndex - 1 + radios.length) %
+                                      radios.length;
                             });
                           },
                           iconSize: 40,
                           color: Theme.of(context).colorScheme.onPrimary,
-                          icon: Icon(Icons.arrow_back_ios),
+                          icon: const Icon(Icons.arrow_back_ios),
                         ),
                       ),
                       RadioItem(
@@ -81,21 +81,24 @@ class _RadioViewState extends State<RadioView> {
                       IconButton(
                         onPressed: () {
                           setState(() {
-                            currentRadioIndex = (currentRadioIndex + 1) % radios.length;
+                            currentRadioIndex =
+                                (currentRadioIndex + 1) % radios.length;
                           });
                         },
                         iconSize: 40,
                         color: Theme.of(context).colorScheme.onPrimary,
-                        icon: Icon(Icons.arrow_forward_ios),
+                        icon: const Icon(Icons.arrow_forward_ios),
                       ),
                     ],
                   ),
-                );
-              }
-            }),
-        Spacer(),
-      ],
+                ),
+                const Spacer(),
+              ],
+            );
+          }
+          return const SizedBox();
+        },
+      ),
     );
   }
 }
-

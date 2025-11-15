@@ -7,41 +7,47 @@ class RadioItem extends StatefulWidget {
   final Radios radios;
   final AudioPlayer audioPlayer;
 
-  const RadioItem({super.key, required this.radios, required this.audioPlayer});
+  const RadioItem({
+    super.key,
+    required this.radios,
+    required this.audioPlayer,
+  });
 
   @override
   _RadioItemState createState() => _RadioItemState();
 }
 
 class _RadioItemState extends State<RadioItem> {
-  bool isPlaying = false; // متغير لتخزين حالة التشغيل
+  bool isPlaying = false;
 
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
     var mediaQuery = MediaQuery.of(context).size;
+
     return Column(
       children: [
-        Text(widget.radios.name ?? "", style: theme.textTheme.bodyMedium),
-        SizedBox(
-          height: mediaQuery.height * .08,
+        Text(
+          widget.radios.name ?? "",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20
+          ),
+          textAlign: TextAlign.center,
+
         ),
+        SizedBox(height: mediaQuery.height * .08),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton(
-              onPressed: () {
-                if (isPlaying) {
-                  stop(); // إيقاف الصوت
-                } else {
-                  play(); // تشغيل الصوت
-                }
-              },
-              iconSize: 60,
-              color: theme.colorScheme.onPrimary,
+              onPressed: toggleAudio,
+              iconSize: 50,
+              color: Colors.white70,
               icon: Icon(
-                isPlaying ? Icons.pause : Icons.play_arrow, // تغيير الأيقونة بناءً على الحالة
-              ),
+
+                  isPlaying ? Icons.pause :
+                  Icons.play_arrow),
             ),
           ],
         ),
@@ -49,18 +55,29 @@ class _RadioItemState extends State<RadioItem> {
     );
   }
 
-  void play() async {
-    await widget.audioPlayer.play(UrlSource(widget.radios.url ?? ""));
-    setState(() {
-      isPlaying = true; // تحديث الحالة إلى تشغيل
-    });
+  void toggleAudio() {
+    if (isPlaying) {
+      stop();
+    } else {
+      play();
+    }
   }
 
+  Future<void> play() async {
+    try {
+      await widget.audioPlayer.play(UrlSource(widget.radios.url ?? ""));
+      setState(() {
+        isPlaying = true;
+      });
+    } catch (e) {
+      print("خطأ أثناء تشغيل الصوت: $e");
+    }
+  }
 
-  void stop() async {
+  Future<void> stop() async {
     await widget.audioPlayer.stop();
     setState(() {
-      isPlaying = false; // تحديث الحالة إلى إيقاف
+      isPlaying = false;
     });
   }
 }

@@ -1,6 +1,6 @@
 name: yaqeen
 description: "A new Flutter project."
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: 'none'
 
 version: 1.0.0+1
 
@@ -15,27 +15,37 @@ dependencies:
   intl: any
   cupertino_icons: ^1.0.2
   google_fonts: ^6.1.0
+  salomon_bottom_bar: ^3.3.2
   provider: ^6.0.5
+  http: ^1.1.0
   localization: ^2.1.1
   audioplayers: ^5.2.1
   shared_preferences: ^2.2.2
   scrollable_positioned_list: ^0.2.3
   flutter_native_splash: ^2.2.15
   url_launcher: ^6.1.6
+  google_nav_bar: ^5.0.7
+  flutter_bloc: ^9.1.1
+  glassmorphism_ui: ^0.3.0
+  just_audio: ^0.9.36
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-  flutter_launcher_icons: ^0.14.3
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
   generate: true
+
   assets:
     - assets/images/
     - assets/files/
     - assets/
+    - assets/audio/azan.mp3
+    - assets/hafs_smart_v8.json
+
   fonts:
     - family: quran
       fonts:
@@ -44,20 +54,8 @@ flutter:
       fonts:
         - asset: assets/me_quran.ttf
 
-flutter_launcher_icons:
-  android: "launcher_icon"
+flutter_icons:
+  android: true
   ios: true
-  image_path: "assets/images/hadeth_header.png"
-  min_sdk_android: 21
-  web:
-    generate: true
-    image_path: "assets/images/hadeth_header.png"
-    background_color: "#ffffff"
-    theme_color: "#000000"
-  windows:
-    generate: true
-    image_path: "assets/images/hadeth_header.png"
-    icon_size: 80
-  macos:
-    generate: true
-    image_path: "assets/images/hadeth_header.png"
+  image_path: "assets/images/icon_lan.png"
+  remove_alpha_ios: true
