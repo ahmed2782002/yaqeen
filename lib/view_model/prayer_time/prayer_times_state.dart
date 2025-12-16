@@ -1,4 +1,4 @@
-import '../model/prayer_times_model.dart';
+import '../../data/model/prayer_times_model.dart';
 
 abstract class PrayerTimesState {}
 
@@ -19,3 +19,5 @@ class PrayerTimesError extends PrayerTimesState {
   final String message;
   PrayerTimesError(this.message);
 }
+
+

@@ -1,16 +1,15 @@
-import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
-import 'package:intl/intl.dart';
+import '../../data/repository/prayer_time_repo.dart';
 import 'prayer_times_state.dart';
-import '../model/prayer_times_model.dart';
-
-
+import '../../data/model/prayer_times_model.dart';
 
 class PrayerTimesCubit extends Cubit<PrayerTimesState> {
-  PrayerTimesCubit() : super(PrayerTimesInitial());
+  PrayerTimesCubit(this.repo) : super(PrayerTimesInitial());
 
-  static PrayerTimesCubit get(context) => BlocProvider.of(context);
+  final PrayerRepository repo;
+
+  static PrayerTimesCubit get(context) =>
+      BlocProvider.of<PrayerTimesCubit>(context);
 
   final Map<String, List<String>> arabCountries = {
     'مصر': ['القاهرة', 'الإسكندرية', 'الجيزة', 'أسوان', 'المنصورة'],
@@ -34,34 +33,26 @@ class PrayerTimesCubit extends Cubit<PrayerTimesState> {
 
   void selectCity(String city) async {
     selectedCity = city;
-    emit(PrayerTimesLoading());
     await fetchPrayerTimes();
   }
 
   Future<void> fetchPrayerTimes() async {
     if (selectedCountry == null || selectedCity == null) return;
+
+    emit(PrayerTimesLoading());
+
     try {
-      final now = DateTime.now();
-      final formattedDate = DateFormat('dd-MM-yyyy').format(now);
-      final url =
-          'https://api.aladhan.com/v1/timingsByCity/$formattedDate?city=$selectedCity&country=$selectedCountry&method=5';
+      final result = await repo.getPrayerTimes(
+        country: selectedCountry!,
+        city: selectedCity!,
+      );
 
-      final response = await http.get(Uri.parse(url));
+      prayerTimesModel = result.$1;
+      readableDate = result.$2;
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        prayerTimesModel = PrayerTimesModel.fromJson(data['data']);
-        readableDate = data['data']['date']['readable'];
-        emit(PrayerTimesLoaded(prayerTimesModel!, readableDate!));
-
-      } else {
-        emit(PrayerTimesError('فشل في جلب مواقيت الصلاة'));
-      }
+      emit(PrayerTimesLoaded(prayerTimesModel!, readableDate!));
     } catch (e) {
       emit(PrayerTimesError(e.toString()));
     }
   }
-
-
-
 }

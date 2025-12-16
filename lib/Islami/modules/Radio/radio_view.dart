@@ -1,10 +1,12 @@
-import 'package:audioplayers/audioplayers.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/cubit/radio_cubit.dart';
-import '../../../data/cubit/radio_state.dart';
-import '../../../data/radio_repository.dart';
-import 'radio_item.dart';
+import 'package:yaqeen/Islami/modules/Radio/radio_controls.dart';
+import '../../../data/repository/radio_repository.dart';
+import '../../../view_model/radio/radio_cubit.dart';
+import '../../../view_model/radio/radio_state.dart';
+
+
 
 class RadioView extends StatefulWidget {
   const RadioView({super.key});
@@ -14,24 +16,18 @@ class RadioView extends StatefulWidget {
 }
 
 class _RadioViewState extends State<RadioView> {
-  late AudioPlayer audioPlayer;
-  int currentRadioIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    audioPlayer = AudioPlayer();
-  }
+  // هنستخدم ValueNotifier عشان نتابع تغيير المحطة الحالية من الـ Controls
+  final ValueNotifier<int> currentIndexNotifier = ValueNotifier<int>(0);
 
   @override
   void dispose() {
-    audioPlayer.dispose();
+    currentIndexNotifier.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var mediaQuery = MediaQuery.of(context).size;
+    final mediaQuery = MediaQuery.of(context).size;
 
     return BlocProvider(
       create: (context) => RadioCubit(RadioRepository())..getRadios(),
@@ -42,63 +38,83 @@ class _RadioViewState extends State<RadioView> {
           } else if (state is RadioError) {
             return Center(child: Text(state.message));
           } else if (state is RadioSuccess) {
-            var radios = state.radios;
+            final radios = state.radios;
 
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Spacer(),
-                Image.asset(
-                  "assets/images/radio.png",
-                  width: mediaQuery.width * .75,
+            if (radios.isEmpty) {
+              return const Center(child: Text("لا توجد محطات راديو"));
+            }
+
+            return Container(
+              width: double.infinity,
+              height: double.infinity,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage("assets/images/Background_qraun.png"),
+                  fit: BoxFit.cover,
                 ),
-                SizedBox(height: mediaQuery.height * .08),
-                const Spacer(),
-                SizedBox(
-                  height: mediaQuery.height * .3,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: IconButton(
-                          onPressed: () {
-                            setState(() {
-                              currentRadioIndex =
-                                  (currentRadioIndex - 1 + radios.length) %
-                                      radios.length;
-                            });
-                          },
-                          iconSize: 40,
-                          color: Theme.of(context).colorScheme.onPrimary,
-                          icon: const Icon(Icons.arrow_back_ios),
-                        ),
-                      ),
-                      RadioItem(
-                        radios: radios[currentRadioIndex],
-                        audioPlayer: audioPlayer,
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          setState(() {
-                            currentRadioIndex =
-                                (currentRadioIndex + 1) % radios.length;
-                          });
-                        },
-                        iconSize: 40,
-                        color: Theme.of(context).colorScheme.onPrimary,
-                        icon: const Icon(Icons.arrow_forward_ios),
-                      ),
-                    ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Spacer(),
+
+                  Image.asset(
+                    "assets/images/radio.png",
+                    width: mediaQuery.width * .75,
                   ),
-                ),
-                const Spacer(),
-              ],
+
+                  SizedBox(height: mediaQuery.height * .05),
+
+                  // اسم المحطة الحالية - يتحدث تلقائيًا
+                  ValueListenableBuilder<int>(
+                    valueListenable: currentIndexNotifier,
+                    builder: (context, currentIndex, _) {
+                      final currentRadio = radios[currentIndex];
+                      return Text(
+                        currentRadio.name ?? "Unknown Radio",
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          shadows: [
+                            Shadow(
+                              blurRadius: 4,
+                              color: Colors.black54,
+                              offset: Offset(1, 1),
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    },
+                  ),
+
+                  SizedBox(height: mediaQuery.height * .05),
+                  const Spacer(),
+
+                  // أزرار التحكم - الكلاس المنفصل
+                  SizedBox(
+                    height: mediaQuery.height * .3,
+                    child: RadioControls(
+                      radios: radios,
+                      initialIndex: 0,
+                      // نرسل الـ notifier عشان الـ Controls يحدثه لما يتغير المؤشر
+                      onIndexChanged: (newIndex) {
+                        currentIndexNotifier.value = newIndex;
+                      },
+                    ),
+                  ),
+
+                  const Spacer(),
+                ],
+              ),
             );
           }
+
           return const SizedBox();
         },
       ),
     );
   }
 }
+

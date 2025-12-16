@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yaqeen/Islami/modules/home/prayer_time/prayer_box.dart';
-import '../../../../data/cubit/prayer_times_cubit.dart';
-import '../../../../data/cubit/prayer_times_state.dart';
+
+import '../../../../view_model/prayer_time/prayer_cubit.dart';
+import '../../../../view_model/prayer_time/prayer_times_state.dart';
 
 
 class PrayerTimeWidget extends StatelessWidget {

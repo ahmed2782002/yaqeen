@@ -1,4 +1,4 @@
-import '../../../../data/model/radiosModel.dart';
+import '../../../../../data/model/radiosModel.dart';
 
 abstract class RadioState {}
 

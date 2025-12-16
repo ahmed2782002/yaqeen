@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'model/radiosModel.dart';
+import '../model/radiosModel.dart';
 
 class RadioRepository {
   Future<List<Radios>> getRadios() async {

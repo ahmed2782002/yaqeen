@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../data/cubit/prayer_times_cubit.dart';
+import '../../../../view_model/prayer_time/prayer_cubit.dart';
 
 class CountryCitySheet extends StatefulWidget {
   const CountryCitySheet({super.key});

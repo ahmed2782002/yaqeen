@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'package:yaqeen/Islami/Core/Provider/prefs_helper.dart';
+import 'package:yaqeen/Core/Provider/prefs_helper.dart';
 
 class AppProvider extends ChangeNotifier {
   ThemeMode currentTheme = ThemeMode.light;
