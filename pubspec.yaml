@@ -45,6 +45,7 @@ flutter:
     - assets/
     - assets/audio/azan.mp3
     - assets/hafs_smart_v8.json
+    - assets/images/image.jpg
 
   fonts:
     - family: quran

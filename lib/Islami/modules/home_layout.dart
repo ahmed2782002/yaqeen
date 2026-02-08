@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
-import 'package:yaqeen/l10n/app_localizations.dart';
 import 'Hadeth/hadeth_view.dart';
 import 'Radio/radio_view.dart';
 import 'Tasbeh/tasbeh.dart';
 import 'home/Quran/quran_view.dart';
-
-
-
 
 class HomeLayout extends StatefulWidget {
   static String routeName = "home layout";
@@ -31,8 +27,6 @@ class _HomeLayoutState extends State<HomeLayout>
 
   @override
   Widget build(BuildContext context) {
-    final local = AppLocalizations.of(context)!;
-
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: AnimatedSwitcher(
@@ -40,16 +34,15 @@ class _HomeLayoutState extends State<HomeLayout>
         child: screens[selectedIndex],
       ),
 
-      /// ✅ Bottom Navigation Bar مع ظل أنيق
       bottomNavigationBar: Container(
         height: 70,
         decoration: const BoxDecoration(
           color: Color(0xFF262422),
           boxShadow: [
             BoxShadow(
-              color: Colors.black54,   // 🔹 لون الظل
-              blurRadius: 10,          // 🔹 تمويه ناعم
-              offset: Offset(0, -2),   // 🔹 اتجاه الظل لأعلى
+              color: Colors.black54,
+              blurRadius: 10,
+              offset: Offset(0, -2),
             ),
           ],
         ),
@@ -66,16 +59,16 @@ class _HomeLayoutState extends State<HomeLayout>
             itemPadding:
             const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
             items: [
-              _buildGlassItem("assets/images/Quran.png", local.quran,
+              _buildGlassItem("assets/images/Quran.png", "القرآن" ,
                   selectedIndex == 0,
                   isHadeth: false),
-              _buildGlassItem("assets/images/hadth.png", local.hadeth,
+              _buildGlassItem("assets/images/hadth.png", "احاديث",
                   selectedIndex == 1,
                   isHadeth: true),
-              _buildGlassItem("assets/images/sebha.png", local.tasbeh,
+              _buildGlassItem("assets/images/sebha.png", "تسبيح",
                   selectedIndex == 2,
                   isHadeth: false),
-              _buildGlassItem("assets/images/img.png", local.radio,
+              _buildGlassItem("assets/images/img.png", "رديو",
                   selectedIndex == 3,
                   isHadeth: false),
             ],
@@ -85,7 +78,6 @@ class _HomeLayoutState extends State<HomeLayout>
     );
   }
 
-  /// ✅ الأيقونة الزجاجية مع اختلاف الحجم للحديث فقط
   SalomonBottomBarItem _buildGlassItem(String asset, String title, bool active,
       {bool isHadeth = false}) {
     return SalomonBottomBarItem(
@@ -113,7 +105,7 @@ class _HomeLayoutState extends State<HomeLayout>
             scale: active
                 ? 1.5
                 : isHadeth
-                ? 1.5 // الحديث الغير مختار أصغر
+                ? 1.5
                 : 2.1,
             child: ImageIcon(
               AssetImage(asset),

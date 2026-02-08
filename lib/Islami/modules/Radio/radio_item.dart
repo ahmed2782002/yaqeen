@@ -22,36 +22,15 @@ class _RadioItemState extends State<RadioItem> {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var mediaQuery = MediaQuery.of(context).size;
-
-    return Column(
-      children: [
-        Text(
-          widget.radios.name ?? "",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 20
-          ),
-          textAlign: TextAlign.center,
-
-        ),
-        SizedBox(height: mediaQuery.height * .08),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            IconButton(
-              onPressed: toggleAudio,
-              iconSize: 50,
-              color: Colors.white70,
-              icon: Icon(
-
-                  isPlaying ? Icons.pause :
-                  Icons.play_arrow),
-            ),
-          ],
-        ),
-      ],
+    return CircleAvatar(
+      radius: 40,
+      backgroundColor: Colors.white24,
+      child: IconButton(
+        iconSize: 40,
+        color: Colors.white,
+        icon: Icon(isPlaying ? Icons.pause : Icons.play_arrow),
+        onPressed: toggleAudio,
+      ),
     );
   }
 
@@ -70,7 +49,7 @@ class _RadioItemState extends State<RadioItem> {
         isPlaying = true;
       });
     } catch (e) {
-      print("خطأ أثناء تشغيل الصوت: $e");
+      print("Error playing audio: $e");
     }
   }
 
